@@ -1,5 +1,4 @@
 const { Thoughts, User } = require("../models");
-const { populate } = require("../models/User");
 
 const UserController = {
   getAllUsers(req, res) {
