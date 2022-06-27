@@ -35,25 +35,20 @@ const thoughtsController = {
             });
     },
 
-    createThought({ body }, res) {
-        console.log(body);
+    createThought({params, body}, res) {
         Thoughts.create(body)
-          .then((thoughtData) => {
-            return User.findOneAndUpdate(
-              { _id: body.userId },
-              { $push: { thoughts: thoughtData._id } },
-              { new: true }
-            );
-          })
-          .then((dbUserData) => {
-            if (!dbUserData) {
-              res.status(404).json({ message: "No user found with this ID!" });
-              return;
+        .then(({_id}) => {
+            return Users.findOneAndUpdate({ _id: params.userId}, {$push: {thoughts: _id}}, {new: true});
+        })
+        .then(dbThoughtsData => {
+            if(!dbThoughtsData) {
+                res.status(404).json({message: 'No thoughts with this particular ID!'});
+                return;
             }
-            res.json(dbUserData);
-          })
-          .catch((err) => res.json(err));
-      },
+            res.json(dbThoughtsData)
+        })
+        .catch(err => res.json(err)); 
+    },
 }
 
 module.exports = thoughtsController;
